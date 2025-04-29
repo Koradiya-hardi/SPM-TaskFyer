@@ -11,14 +11,19 @@ dotenv.config();
 const port = process.env.PORT || 8000;
 
 const app = express();
-
+const allowedOrigins = ['http://localhost:3000', 'https://spm-task-fyer.vercel.app'];
 // middleware
-app.use(
-  cors({
-    origin: process.env.CLIENT_URL,
-    credentials: true,
-  })
-);
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+}));
+
 console.log("CLIENT_URL:", process.env.CLIENT_URL);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
